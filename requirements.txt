@@ -1,0 +1,11 @@
+Flask
+Flask-RESTful
+Flask-SQLAlchemy
+SQLAlchemy
+flask-marshmallow
+marshmallow-SQLAlchemy
+
+python-dotenv
+requests
+schedule
+pg8000
