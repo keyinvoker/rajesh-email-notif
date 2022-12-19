@@ -1,5 +1,6 @@
-from dotenv import find_dotenv, load_dotenv
 import os
+from dotenv import find_dotenv, load_dotenv
+from logging.config import dictConfig
 
 load_dotenv(find_dotenv())
 
@@ -9,7 +10,8 @@ EMAIL_SERVER = os.environ.get('EMAIL_SERVER')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 
 PERIOD = os.environ.get('PERIOD')
-MAX = os.environ.get('MAX')
+DURATION = int(os.environ.get('DURATION'))
+MAX = int(os.environ.get('MAX'))
 
 DB_HOST = os.environ.get('DB_HOST')
 DB_USER = os.environ.get('DB_USER')
@@ -21,3 +23,64 @@ DB_CONNECT_STRING = (
 )
 
 ENDPOINT = os.environ.get('ENDPOINT')
+
+
+# NOTE: [Logging]
+here = os.path.abspath(os.path.dirname(__file__))
+
+
+def get_log_filename(log_filename):
+    return os.path.join(here, os.pardir, 'app/logs', f'{ log_filename }.log')
+
+
+LOGGING_CONFIG = {
+    'version': 1,
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        }
+    },
+    'handlers': {
+        'file_app': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1000000000,
+            'backupCount': 5,
+            'level': 'INFO',
+            'formatter': 'simple',
+            'filename': get_log_filename('app'),
+        },
+        'file_error': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1000000000,
+            'backupCount': 5,
+            'level': 'ERROR',
+            'formatter': 'simple',
+            'filename': get_log_filename('error'),
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'app': {
+            'handlers': ['console', 'file_app'],
+            'propagate': False,
+        },
+        'error': {
+            'handlers': ['console', 'file_error'],
+            'propagate': False,
+        },
+    },
+    'root': {'level': 'INFO', 'handlers': ['console', 'file_error']},
+}
+
+
+class Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+
+    SQLALCHEMY_DATABASE_URI = DB_CONNECT_STRING
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    dictConfig(LOGGING_CONFIG)

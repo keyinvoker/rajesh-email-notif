@@ -2,13 +2,14 @@ from app import db
 
 
 class Customer(db.Model):
+    __tablename__ = 'customer'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     status = db.Column(
         db.String(255),
         nullable=False,
-        default='Unnotified'  # Notified, Inactive (== disabled acc)
+        default='Unnotified'  # Notified, Inactive (disabled acc)
     )
     notifs_received = db.Column(db.Integer, nullable=False, default=0)
 
@@ -29,10 +30,10 @@ class Customer(db.Model):
 
 '''
 CREATE TABLE customer(
-id SERIAL PRIMARY KEY,
-name VARCHAR(255) NOT NULL,
-email VARCHAR(255) NOT NULL,
-status VARCHAR(255) NOT NULL DEFAULT "Unnotified",
-notifs_received INT NOT NULL DEFAULT 0,
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    status VARCHAR(255) NOT NULL DEFAULT 'Unnotified',
+    notifs_received INT NOT NULL DEFAULT 0,
 );
 '''

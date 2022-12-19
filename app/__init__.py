@@ -1,12 +1,21 @@
+from logging import getLogger
+
 from flask import Flask
 from flask_marshmallow import Marshmallow
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 
-from app.config import DB_CONNECT_STRING
+from app.config import Config
 
-app = Flask(__name__)
+db = SQLAlchemy()
+app = Flask("Email Notif")
+app.config.from_object(Config)
+db.init_app(app)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONNECT_STRING
-db = SQLAlchemy(app)
 ma = Marshmallow(app)
+
+app_logger = getLogger('app')
+error_logger = getLogger('error')
+
+from app.routes import *
+from app.utils import email_scheduler

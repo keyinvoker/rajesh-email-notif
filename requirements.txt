@@ -9,3 +9,4 @@ python-dotenv
 requests
 schedule
 pg8000
+apscheduler
