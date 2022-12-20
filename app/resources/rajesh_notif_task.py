@@ -76,8 +76,8 @@ class RajeshEmailNotif(Resource):
                         smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
                         smtp.sendmail(EMAIL_SENDER, recipient, em.as_string())
 
-                    del em['To']
-                    del em['Subject']
+                        del em['To']
+                        del em['Subject']
 
                 elif cust['notifs_received'] >= MAX:
                     updated_cust = (
