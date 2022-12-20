@@ -33,7 +33,7 @@ class RajeshEmailNotif(Resource):
 
             for cust in output:
                 if (
-                    cust['status'] == 'Unnotified'
+                    cust['status'] != 'Inactive'
                     and cust['notifs_received'] < MAX
                 ):
                     recipient = cust['email']
