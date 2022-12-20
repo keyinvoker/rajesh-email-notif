@@ -76,8 +76,9 @@ with app.app_context():
         updated_cust.notifs_received = customer['notifs_received']
         updated_cust.update()
 
-        RajeshEmailNotifIndividual().get(
-            RajeshEmailNotifIndividual, updated_cust.id
-        )
+        # NOTE: circular import
+        # RajeshEmailNotifIndividual().get(
+        #     RajeshEmailNotifIndividual, updated_cust.id
+        # )
 
         # TODO: remove current job from job list
