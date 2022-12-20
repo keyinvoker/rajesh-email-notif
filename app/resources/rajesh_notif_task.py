@@ -1,23 +1,17 @@
-import smtplib
-import ssl
-from email.message import EmailMessage
+
 from flask_restful import Resource
 
+from app import app
 from app.config import (
-    ENDPOINT,
-    EMAIL_PASSWORD,
-    EMAIL_PORT,
-    EMAIL_SENDER,
-    EMAIL_SERVER,
     MAX,
+    CHANGING_DURATION,
+    CONSTANT_DURATION,
 )
 from app.models.customer import Customer
 from app.schemas.customer_schema import CustomerSchema
-from app import app
+from app.utils.email_scheduler import scheduler
 
-context = ssl.create_default_context()
-em = EmailMessage()
-em['From'] = EMAIL_SENDER
+from app.utils.send_email import send_email
 
 
 class RajeshEmailNotif(Resource):
@@ -36,48 +30,22 @@ class RajeshEmailNotif(Resource):
                     cust['status'] != 'Inactive'
                     and cust['notifs_received'] < MAX
                 ):
-                    recipient = cust['email']
-                    subject = f"Reminder for {cust['name']}"
-                    em['To'] = recipient
-                    em['Subject'] = subject
 
-                    cust['notifs_received'] += 1
-                    updated_cust = (
-                        Customer.query
-                        .filter_by(id=cust['id'])
-                        .first()
-                    )
-                    updated_cust.notifs_received = cust['notifs_received']
-                    updated_cust.update()
-                    cust_list.append(updated_cust.name)
-                    body = (
-                        f'''
-                        <p>Reminder count: {cust['notifs_received']}</p>
-                        <p>Click the button below to stop notifs.</p>
-                        <form action="
-                                    {ENDPOINT}/verify/{cust['id']}"
-                                    method="POST">
-                            <input type="submit" value="I understand." style="
-                                    border: 1px solid darkgreen;
-                                    color: whitesmoke;
-                                    background-color: green;">
-                        </form>
-                        '''
-                    )
+                    try:
+                        duration = CHANGING_DURATION[cust['notifs_received']]
+                    except Exception:
+                        duration = CONSTANT_DURATION
 
-                    em.set_content(body, subtype='html')
+                    print(f"""\
+[scheduler added]: {cust['name']} - {cust['notifs_received']} - {duration}\
+""")
+                    scheduler.add_job(
+                        lambda: send_email(cust, duration),
+                        trigger="interval",
+                        minutes=duration
+                    )  # TODO: scheduler overwrites prev schedules when stacked
 
-                    with smtplib.SMTP_SSL(
-                        EMAIL_SERVER,
-                        EMAIL_PORT,
-                        context=context
-                    ) as smtp:
-
-                        smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
-                        smtp.sendmail(EMAIL_SENDER, recipient, em.as_string())
-
-                        del em['To']
-                        del em['Subject']
+                    cust_list.append(cust['name'])
 
                 elif cust['notifs_received'] >= MAX:
                     updated_cust = (
@@ -87,5 +55,5 @@ class RajeshEmailNotif(Resource):
                     )
                     updated_cust.status = 'Inactive'
                     updated_cust.update()
-
+            print(scheduler.get_jobs())
             return {'list': cust_list}

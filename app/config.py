@@ -1,3 +1,4 @@
+import json
 import os
 from dotenv import find_dotenv, load_dotenv
 from logging.config import dictConfig
@@ -9,20 +10,21 @@ EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_SERVER = os.environ.get('EMAIL_SERVER')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 
-PERIOD = os.environ.get('PERIOD')
-DURATION = int(os.environ.get('DURATION'))
 MAX = int(os.environ.get('MAX'))
+PERIOD = os.environ.get('PERIOD')
+CHANGING_DURATION = json.loads(os.environ.get('CHANGING_DURATION'))
+CONSTANT_DURATION = int(os.environ.get('CONSTANT_DURATION'))
 
 DB_HOST = os.environ.get('DB_HOST')
 DB_USER = os.environ.get('DB_USER')
 DB_NAME = os.environ.get('DB_NAME')
 DB_PASS = os.environ.get('DB_PASS')
 DB_CONNECT_STRING = (
-    f'postgresql+pg8000://{ DB_USER }:{ DB_PASS }@'
-    f'{ DB_HOST }/{ DB_NAME }'
+    f'postgresql+pg8000://{ DB_USER }:{ DB_PASS }'
+    f'@{ DB_HOST }/{ DB_NAME }'
 )
 
-ENDPOINT = os.environ.get('ENDPOINT')
+BASE_ENDPOINT = os.environ.get('BASE_ENDPOINT')
 
 
 # NOTE: [Logging]
