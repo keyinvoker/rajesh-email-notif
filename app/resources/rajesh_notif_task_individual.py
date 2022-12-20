@@ -26,9 +26,6 @@ class RajeshEmailNotifIndividual(Resource):
                 and customer.notifs_received < MAX
             ):
 
-                # TODO: MASUKKIN FUNCTION SEND_EMAIL DISINI!!!
-                #     - cocokin value 'notifs_received' ke array
-                #       CHANGING_DURATION (per element)
                 try:
                     duration = CHANGING_DURATION[customer.notifs_received]
                 except Exception:
