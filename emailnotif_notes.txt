@@ -1,3 +1,0 @@
-DESC:
-A function that checks the database periodically
-to remind the users by sending a notif through email.

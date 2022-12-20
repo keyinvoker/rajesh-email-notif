@@ -26,14 +26,3 @@ class Customer(db.Model):
     @classmethod
     def get_by_id(cls, id):
         return cls.query.get_or_404(id)
-
-
-'''
-CREATE TABLE customer(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    status VARCHAR(255) NOT NULL DEFAULT 'Unnotified',
-    notifs_received INT NOT NULL DEFAULT 0,
-);
-'''
