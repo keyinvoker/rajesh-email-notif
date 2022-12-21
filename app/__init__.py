@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.config import Config
 
-from app.utils.email_scheduler import start_scheduler
 
 db = SQLAlchemy()
 app = Flask("Email Notif")
@@ -19,6 +18,7 @@ ma = Marshmallow(app)
 app_logger = getLogger('app')
 error_logger = getLogger('error')
 
+from app.utils.email_scheduler import start_scheduler
 start_scheduler()
 
 from app.routes import *
