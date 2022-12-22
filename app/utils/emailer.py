@@ -3,7 +3,6 @@ import ssl
 from email.message import EmailMessage
 
 from app import app
-from app.models.customer import Customer
 from app.config import (
     BASE_ENDPOINT,
     EMAIL_PASSWORD,
@@ -11,8 +10,7 @@ from app.config import (
     EMAIL_SENDER,
     EMAIL_SERVER,
 )
-
-from app.utils.email_scheduler import scheduler
+from app.models.customer import Customer
 
 
 def send_email(cust_id):
@@ -28,7 +26,9 @@ def send_email(cust_id):
         )
 
         print(
-            f"Working on {customer.name} -> {customer.id} (passed ID: {cust_id})"
+            f"""\
+Working on {customer.name} -> {customer.id} (passed ID: {cust_id})\
+"""
         )
 
         recipient = customer.email
@@ -39,7 +39,7 @@ Reminder {customer.notifs_received} for {customer.name}\
 
         body = (
             f'''\
-            <p>Reminder count: {customer.notifs_received}</p>
+            <p>Reminder count: {customer.notifs_received + 1}</p>
             <p>Click the button below to stop notifs.</p>
             <form action="
                         {BASE_ENDPOINT}/verify/{customer.id}"
@@ -67,8 +67,3 @@ Reminder {customer.notifs_received} for {customer.name}\
 
         customer.notifs_received += 1
         customer.update()
-
-        print("\nUpdated Jobs:")
-        for job in scheduler.get_jobs():
-            print(job)
-        print("")
