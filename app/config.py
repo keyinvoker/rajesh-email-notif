@@ -9,6 +9,7 @@ EMAIL_SENDER = os.environ.get('EMAIL_SENDER')
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_SERVER = os.environ.get('EMAIL_SERVER')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 
 MAX = int(os.environ.get('MAX'))
 PERIOD = os.environ.get('PERIOD')
